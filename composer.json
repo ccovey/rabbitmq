@@ -1,0 +1,23 @@
+{
+    "name": "ccovey/rabbitmq",
+    "description": "RabbitMQ implementation",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+          "name": "Cody Covey",
+          "email": "ccovey14@gmail.com"
+        }
+    ],
+    "require": {
+        "php-amqplib/php-amqplib": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+          "Ccovey\\RabbitMQ\\": "src/"
+        }
+    }
+}
