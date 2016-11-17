@@ -2,6 +2,8 @@
 
 namespace Ccovey\RabbitMQ\Connection;
 
+use Ccovey\RabbitMQ\Channel;
+use Ccovey\RabbitMQ\ChannelInterface;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
 class Connection implements ConnectionInterface
@@ -33,7 +35,7 @@ class Connection implements ConnectionInterface
         $this->stream->reconnect();
     }
 
-    public function getChannel(string $channelId)
+    public function getChannel(string $channelId = '') : ChannelInterface
     {
         return new Channel($this->stream->channel($channelId));
     }

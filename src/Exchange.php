@@ -52,7 +52,7 @@ class Exchange
     public function __construct(
         string $exchange,
         string $type,
-        array $arguments = null,
+        array $arguments = [],
         bool $passive = false,
         bool $durable = true,
         bool $autoDelete = false,

@@ -2,6 +2,7 @@
 
 use Ccovey\RabbitMQ\Channel;
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
+use Ccovey\RabbitMQ\Exchange;
 use Ccovey\RabbitMQ\Producer\Message;
 use Ccovey\RabbitMQ\Queue;
 use PhpAmqpLib\Channel\AMQPChannel;
@@ -15,7 +16,7 @@ class ChannelTest extends PHPUnit_Framework_TestCase
     private $channel;
 
     /**
-     * @var AMQPChannel
+     * @var AMQPChannel|PHPUnit_Framework_MockObject_MockObject
      */
     private $amqpChannel;
 
@@ -121,5 +122,38 @@ class ChannelTest extends PHPUnit_Framework_TestCase
         $returnedChannel = $this->channel->declareQueue($queue);
 
         $this->assertEquals($this->channel, $returnedChannel);
+    }
+
+    public function testBindQueue()
+    {
+        $queue = new Queue('queueName');
+        $this->amqpChannel->expects($this->once())
+            ->method('queue_bind')
+            ->with('queueName');
+
+        $returnedChannel = $this->channel->bindQueue($queue);
+
+        $this->assertEquals($this->channel, $returnedChannel);
+    }
+
+    public function testDeclareExchange()
+    {
+        $exchange = new Exchange('exchange', 'direct');
+        $this->amqpChannel->expects($this->once())
+            ->method('exchange_declare')
+            ->with('exchange', 'direct');
+
+        $returnedChannel = $this->channel->declareExchange($exchange);
+
+        $this->assertEquals($this->channel, $returnedChannel);
+    }
+
+    public function testGetCallbacks()
+    {
+        $this->amqpChannel->callbacks = ['foo'];
+
+        $returnedChannel = $this->channel->getCallbacks();
+
+        $this->assertEquals(['foo'], $returnedChannel);
     }
 }

@@ -86,6 +86,11 @@ class ConsumableParameters implements Consumable
         return $this->callback;
     }
 
+    public function setCallback($callback)
+    {
+        $this->callback = $callback;
+    }
+
     public function isNoLocal() : bool
     {
         return $this->noLocal;

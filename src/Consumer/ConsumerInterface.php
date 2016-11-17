@@ -2,7 +2,7 @@
 
 namespace Ccovey\RabbitMQ\Consumer;
 
-interface ComsumerInterface
+interface ConsumerInterface
 {
 
 }

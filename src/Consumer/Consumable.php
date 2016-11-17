@@ -10,6 +10,8 @@ interface Consumable
 
     public function getCallback();
 
+    public function setCallback($callback);
+
     public function isNoLocal() : bool;
 
     public function isNoAck() : bool;
