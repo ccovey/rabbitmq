@@ -5,7 +5,7 @@ namespace Ccovey\RabbitMQ\Consumer;
 use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
 use Ccovey\RabbitMQ\QueuedMessage;
-use Ccovey\RabbitMQ\QueueRestartManagerInterface;
+use Ccovey\RabbitMQ\QueuedMessageInterface;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class Consumer implements ConsumerInterface
@@ -14,11 +14,6 @@ class Consumer implements ConsumerInterface
      * @var ConnectionInterface
      */
     private $connection;
-
-    /**
-     * @var QueueRestartManagerInterface
-     */
-    private $queueRestartManager;
 
     /**
      * @var ChannelInterface
@@ -30,16 +25,25 @@ class Consumer implements ConsumerInterface
      */
     private $callback;
 
-    public function __construct(ConnectionInterface $connection, QueueRestartManagerInterface $queueRestartManager, string $channelId = '')
+    /**
+     * @var callable
+     */
+    private $restartCheckCallable;
+
+    public function __construct(ConnectionInterface $connection, string $channelId = '')
     {
         $this->connection = $connection;
-        $this->queueRestartManager = $queueRestartManager;
         $this->channel = $this->connection->getChannel($channelId);
     }
 
-    public function setCallback(callable $callback)
+    public function setCallback(callable $callback = null)
     {
         $this->callback = $callback;
+    }
+
+    public function setRestartCheckCallable(callable $callable)
+    {
+        $this->restartCheckCallable = $callable;
     }
 
     public function consume(Consumable $consumable)
@@ -52,12 +56,19 @@ class Consumer implements ConsumerInterface
         }
     }
 
-    protected function process(AMQPMessage $message)
+    public function process(AMQPMessage $message)
     {
         $queuedMessage = new QueuedMessage($message);
 
         call_user_func($this->callback, $queuedMessage);
 
-        $this->queueRestartManager->shouldRestart($queuedMessage->getQueueName());
+        $this->checkRestart($queuedMessage);
+    }
+
+    private function checkRestart(QueuedMessageInterface $queuedMessage)
+    {
+        if ($this->restartCheckCallable) {
+            ($this->restartCheckCallable)($queuedMessage);
+        }
     }
 }

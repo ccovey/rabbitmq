@@ -18,4 +18,6 @@ interface ChannelInterface
     public function declareExchange(Exchange $exchange) : ChannelInterface;
 
     public function getCallbacks() : array;
+
+    public function setCallbacks(array $callbacks = []);
 }

@@ -25,7 +25,7 @@ class QueuedMessage implements QueuedMessageInterface
     public function __construct(AMQPMessage $message)
     {
         $this->message = $message;
-        $this->body = json_decode($this->message, 1);
+        $this->body = json_decode($this->message->body, 1);
         $this->queueName = $this->message->delivery_info['routing_key'];
     }
 

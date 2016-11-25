@@ -143,4 +143,9 @@ class Channel implements ChannelInterface
     {
         return $this->channel->callbacks;
     }
+
+    public function setCallbacks(array $callbacks = [])
+    {
+        $this->channel->callbacks = $callbacks;
+    }
 }

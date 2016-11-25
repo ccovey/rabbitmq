@@ -4,7 +4,6 @@ use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
-use Ccovey\RabbitMQ\QueueRestartManagerInterface;
 
 class ConsumerTest extends PHPUnit_Framework_TestCase
 {
@@ -26,12 +25,11 @@ class ConsumerTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->connection = $this->createMock(ConnectionInterface::class);
-        $this->restartManager = $this->createMock(QueueRestartManagerInterface::class);
         $this->channel = $this->createMock(ChannelInterface::class);
         $this->connection->expects($this->once())
             ->method('getChannel')
             ->willReturn($this->channel);
-        $this->consumer = new Consumer($this->connection, $this->restartManager);
+        $this->consumer = new Consumer($this->connection);
     }
 
     public function testConsume()

@@ -6,7 +6,7 @@ use Ccovey\RabbitMQ\Connection\ConnectionParameters;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Channel\AMQPChannel;
 
-class ConnectionTest  extends PHPUnit_Framework_TestCase
+class ConnectionTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var Connection
