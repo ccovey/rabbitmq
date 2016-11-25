@@ -15,3 +15,6 @@ before_script:
   - composer install
   - git config --global user.name travis-ci
   - git config --global user.email travis@example.com
+
+services:
+    - rabbitmq
