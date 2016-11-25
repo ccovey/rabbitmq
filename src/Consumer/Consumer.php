@@ -4,6 +4,9 @@ namespace Ccovey\RabbitMQ\Consumer;
 
 use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
+use Ccovey\RabbitMQ\QueuedMessage;
+use Ccovey\RabbitMQ\QueueRestartManagerInterface;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Consumer implements ConsumerInterface
 {
@@ -11,6 +14,11 @@ class Consumer implements ConsumerInterface
      * @var ConnectionInterface
      */
     private $connection;
+
+    /**
+     * @var QueueRestartManagerInterface
+     */
+    private $queueRestartManager;
 
     /**
      * @var ChannelInterface
@@ -22,9 +30,10 @@ class Consumer implements ConsumerInterface
      */
     private $callback;
 
-    public function __construct(ConnectionInterface $connection, string $channelId = '')
+    public function __construct(ConnectionInterface $connection, QueueRestartManagerInterface $queueRestartManager, string $channelId = '')
     {
         $this->connection = $connection;
+        $this->queueRestartManager = $queueRestartManager;
         $this->channel = $this->connection->getChannel($channelId);
     }
 
@@ -41,5 +50,14 @@ class Consumer implements ConsumerInterface
         while (count($this->channel->getCallbacks())) {
             $this->channel->wait();
         }
+    }
+
+    protected function process(AMQPMessage $message)
+    {
+        $queuedMessage = new QueuedMessage($message);
+
+        call_user_func($this->callback, $queuedMessage);
+
+        $this->queueRestartManager->shouldRestart($queuedMessage->getQueueName());
     }
 }
