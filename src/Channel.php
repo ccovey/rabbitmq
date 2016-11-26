@@ -5,6 +5,7 @@ namespace Ccovey\RabbitMQ;
 use Ccovey\RabbitMQ\Consumer\Consumable;
 use Ccovey\RabbitMQ\Producer\Publishable;
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class Channel implements ChannelInterface
 {
@@ -147,5 +148,15 @@ class Channel implements ChannelInterface
     public function setCallbacks(array $callbacks = [])
     {
         $this->channel->callbacks = $callbacks;
+    }
+
+    /**
+     * @param Consumable $consumable
+     *
+     * @return AMQPMessage|null
+     */
+    public function getMessage(Consumable $consumable)
+    {
+        return $this->channel->basic_get($consumable->getQueueName(), $consumable->isNoAck(), $consumable->getTicket());
     }
 }

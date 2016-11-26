@@ -56,6 +56,16 @@ class Consumer implements ConsumerInterface
         }
     }
 
+    public function getMessage(Consumable $consumable) : QueuedMessage
+    {
+        return new QueuedMessage($this->channel->getMessage($consumable));
+    }
+
+    public function getChannel() : ChannelInterface
+    {
+        return $this->channel;
+    }
+
     public function process(AMQPMessage $message)
     {
         $queuedMessage = new QueuedMessage($message);

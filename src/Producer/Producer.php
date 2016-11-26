@@ -27,4 +27,9 @@ class Producer implements ProducerInterface
     {
         $this->channel->publish($message);
     }
+
+    public function getChannel() : ChannelInterface
+    {
+        return $this->channel;
+    }
 }

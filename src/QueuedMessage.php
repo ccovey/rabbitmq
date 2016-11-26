@@ -34,6 +34,11 @@ class QueuedMessage implements QueuedMessageInterface
         return $this->queueName;
     }
 
+    public function getBody() : array
+    {
+        return $this->body;
+    }
+
     /**
      * @param string $value
      *
