@@ -71,7 +71,7 @@ class Consumer implements ConsumerInterface
     {
         $queuedMessage = new QueuedMessage($message);
 
-        call_user_func($this->callback, $queuedMessage);
+        call_user_func($this->callback, $queuedMessage, $this->channel);
 
         $this->checkRestart($queuedMessage);
     }

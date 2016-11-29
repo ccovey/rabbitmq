@@ -21,4 +21,6 @@ interface ChannelInterface
     public function setCallbacks(array $callbacks = []);
     public function getMessage(Consumable $consumable);
     public function getQueueSize(Queue $queue) : int;
+    public function deleteQueue(string $queueName) : ChannelInterface;
+    public function deleteExchange(string $queueName) : ChannelInterface;
 }

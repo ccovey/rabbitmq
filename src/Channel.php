@@ -170,4 +170,18 @@ class Channel implements ChannelInterface
 
         return $declaredQueue[1] ?? 0;
     }
+
+    public function deleteQueue(string $queueName) : ChannelInterface
+    {
+        $this->channel->queue_delete($queueName);
+
+        return $this;
+    }
+
+    public function deleteExchange(string $queueName) : ChannelInterface
+    {
+        $this->channel->exchange_delete($queueName);
+
+        return $this;
+    }
 }

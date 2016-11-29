@@ -34,6 +34,11 @@ class QueuedMessage implements QueuedMessageInterface
         return $this->queueName;
     }
 
+    public function getDeliveryTag() : string
+    {
+        return $this->message->delivery_info['delivery_tag'];
+    }
+
     public function getBody() : array
     {
         return $this->body;

@@ -184,4 +184,20 @@ class ChannelTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(15, $this->channel->getQueueSize($queue));
     }
+
+    public function testDeleteExchange()
+    {
+        $this->amqpChannel->expects($this->once())
+            ->method('exchange_delete')
+            ->with('exchangeName');
+        $this->channel->deleteExchange('exchangeName');
+    }
+
+    public function testDeleteQueue()
+    {
+        $this->amqpChannel->expects($this->once())
+            ->method('queue_delete')
+            ->with('queueName');
+        $this->channel->deleteQueue('queueName');
+    }
 }
