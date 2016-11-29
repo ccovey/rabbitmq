@@ -20,4 +20,5 @@ interface ChannelInterface
     public function getCallbacks() : array;
     public function setCallbacks(array $callbacks = []);
     public function getMessage(Consumable $consumable);
+    public function getQueueSize(Queue $queue) : int;
 }

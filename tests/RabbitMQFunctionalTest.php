@@ -42,7 +42,7 @@ class RabbitMQFunctionalTest extends PHPUnit_Framework_TestCase
             throw new \Exception(); // this is to stop the queue;
         });
         $this->consumer->setCallback(function ($message) {
-            echo 'Foo';
+            // don't need to take action here.
         });
 
         try {

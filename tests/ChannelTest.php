@@ -156,4 +156,32 @@ class ChannelTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals(['foo'], $returnedChannel);
     }
+
+    public function testGetMessage()
+    {
+        $queue = new ConsumableParameters('queueName');
+        $mockMessage = $this->createMock(AMQPMessage::class);
+        $this->amqpChannel->expects($this->once())
+            ->method('basic_get')
+            ->with('queueName', false, null)
+            ->willReturn($mockMessage);
+        $message = $this->channel->getMessage($queue);
+
+        $this->assertEquals($mockMessage, $message);
+    }
+
+    public function testGetQueueSize()
+    {
+        $queue = new Queue('queueName');
+        $this->amqpChannel->expects($this->once())
+            ->method('queue_declare')
+            ->with('queueName', true)
+            ->willReturn([
+                'queueName',
+                15,
+                0
+            ]);
+
+        $this->assertEquals(15, $this->channel->getQueueSize($queue));
+    }
 }

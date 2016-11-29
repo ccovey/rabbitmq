@@ -4,6 +4,7 @@ namespace Ccovey\RabbitMQ\Consumer;
 
 use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
+use Ccovey\RabbitMQ\Queue;
 use Ccovey\RabbitMQ\QueuedMessage;
 use Ccovey\RabbitMQ\QueuedMessageInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -73,6 +74,18 @@ class Consumer implements ConsumerInterface
         call_user_func($this->callback, $queuedMessage);
 
         $this->checkRestart($queuedMessage);
+    }
+
+    public function getSize($queue) : int
+    {
+        $queueParams = new Queue(
+            $queue,
+            '',
+            null,
+            true
+        );
+
+        return $this->channel->getQueueSize($queueParams);
     }
 
     private function checkRestart(QueuedMessageInterface $queuedMessage)

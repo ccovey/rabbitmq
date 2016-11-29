@@ -85,11 +85,6 @@ class Channel implements ChannelInterface
         return $this;
     }
 
-    /**
-     * @param Queue $queue
-     *
-     * @return ChannelInterface
-     */
     public function declareQueue(Queue $queue) : ChannelInterface
     {
         $this->channel->queue_declare(
@@ -158,5 +153,21 @@ class Channel implements ChannelInterface
     public function getMessage(Consumable $consumable)
     {
         return $this->channel->basic_get($consumable->getQueueName(), $consumable->isNoAck(), $consumable->getTicket());
+    }
+
+    public function getQueueSize(Queue $queue) : int
+    {
+        $declaredQueue = $this->channel->queue_declare(
+            $queue->getQueueName(),
+            true,
+            $queue->isDurable(),
+            $queue->isExclusive(),
+            $queue->isAutoDelete(),
+            $queue->isNoWait(),
+            $queue->getArguments(),
+            $queue->getTicket()
+        );
+
+        return $declaredQueue[1] ?? 0;
     }
 }

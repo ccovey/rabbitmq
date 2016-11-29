@@ -4,6 +4,8 @@ use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
+use Ccovey\RabbitMQ\QueuedMessage;
+use PhpAmqpLib\Message\AMQPMessage;
 
 class ConsumerTest extends PHPUnit_Framework_TestCase
 {
@@ -51,5 +53,26 @@ class ConsumerTest extends PHPUnit_Framework_TestCase
             ->method('wait');
 
         $this->consumer->consume($params);
+    }
+
+    public function testGetMessage()
+    {
+        $mockMessage = $this->createMock(AMQPMessage::class);
+        $mockMessage->delivery_info = [
+            'routing_key' => 'queueName',
+        ];
+        $mockMessage->body = json_encode([
+            'foo' => 'bar',
+        ]);
+        $params = new ConsumableParameters('queueName');
+        $this->channel->expects($this->once())
+            ->method('getMessage')
+            ->with($params)
+            ->willReturn($mockMessage);
+
+        $message = $this->consumer->getMessage($params);
+        $this->assertEquals(['foo' => 'bar'], $message->getBody());
+        $this->assertEquals('queueName', $message->getQueueName());
+        $this->assertEquals('bar', $message->foo);
     }
 }

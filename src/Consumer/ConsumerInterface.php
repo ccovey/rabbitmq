@@ -10,4 +10,5 @@ interface ConsumerInterface
     public function consume(Consumable $consumable);
     public function getMessage(Consumable $consumable) : QueuedMessage;
     public function getChannel() : ChannelInterface;
+    public function getSize($queue) : int;
 }
