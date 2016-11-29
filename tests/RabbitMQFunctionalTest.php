@@ -81,8 +81,10 @@ class RabbitMQFunctionalTest extends PHPUnit_Framework_TestCase
         $this->consumer->setRestartCheckCallable(function() {
             throw new \Exception(); // this is to stop the queue;
         });
-        $this->consumer->setCallback(function (QueuedMessage $message, ChannelInterface $channel) {
-            $channel->acknowledge($message->getDeliveryTag());
+        $this->consumer->setCallback(function (QueuedMessage $queuedMessage, ChannelInterface $channel) use ($message) {
+            $this->assertEquals(AMQPMessage::DELIVERY_MODE_NON_PERSISTENT, $message->getDeliveryMode());
+            $this->assertEquals($message->getBody(), $queuedMessage->getBody());
+            $channel->acknowledge($queuedMessage->getDeliveryTag());
         });
 
         try {

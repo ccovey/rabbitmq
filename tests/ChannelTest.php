@@ -185,6 +185,13 @@ class ChannelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(15, $this->channel->getQueueSize($queue));
     }
 
+    public function testSetCallbacks()
+    {
+        $callbacks = [function () { return 'foo'; }];
+        $this->channel->setCallbacks($callbacks);
+        $this->assertEquals($callbacks, $this->amqpChannel->callbacks);
+    }
+
     public function testDeleteExchange()
     {
         $this->amqpChannel->expects($this->once())

@@ -55,6 +55,12 @@ class ConsumerTest extends PHPUnit_Framework_TestCase
         $this->consumer->consume($params);
     }
 
+    public function testGetChannel()
+    {
+        $this->assertEquals($this->channel, $this->consumer->getChannel());
+    }
+
+
     public function testGetMessage()
     {
         $mockMessage = $this->createMock(AMQPMessage::class);
