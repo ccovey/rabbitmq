@@ -1,6 +1,7 @@
 <?php
 
 use Ccovey\RabbitMQ\ChannelInterface;
+use Ccovey\RabbitMQ\Config\QueueConfig;
 use Ccovey\RabbitMQ\Connection\Connection;
 use Ccovey\RabbitMQ\Connection\ConnectionParameters;
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
@@ -9,6 +10,7 @@ use Ccovey\RabbitMQ\Exchange;
 use Ccovey\RabbitMQ\Producer\Message;
 use Ccovey\RabbitMQ\Producer\Producer;
 use Ccovey\RabbitMQ\Queue;
+use Ccovey\RabbitMQ\QueueDeclarer;
 use Ccovey\RabbitMQ\QueuedMessage;
 use PhpAmqpLib\Exception\AMQPProtocolChannelException;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -19,6 +21,11 @@ class RabbitMQFunctionalTest extends PHPUnit_Framework_TestCase
      * @var Connection
      */
     private $connection;
+
+    /**
+     * @var QueueDeclarer
+     */
+    private $queueDeclarer;
 
     /**
      * @var Consumer
@@ -33,9 +40,11 @@ class RabbitMQFunctionalTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $connectionParameters = new ConnectionParameters('localhost');
+        $this->config = new QueueConfig(['exchange' => 'DifferentExchangeName']);
         $this->connection = new Connection($connectionParameters);
-        $this->consumer = new Consumer($this->connection);
-        $this->producer = new Producer($this->connection);
+        $this->queueDeclarer = new QueueDeclarer($this->connection, $this->config);
+        $this->consumer = new Consumer($this->connection, $this->queueDeclarer);
+        $this->producer = new Producer($this->connection, $this->queueDeclarer);
     }
 
     public function tearDown()
@@ -68,11 +77,8 @@ class RabbitMQFunctionalTest extends PHPUnit_Framework_TestCase
         $message = new Message(['foo'], 'queueName', 'DifferentExchangeName');
         $message->setDeliveryMode(AMQPMessage::DELIVERY_MODE_NON_PERSISTENT);
         $exchange = new Exchange('DifferentExchangeName', 'fanout', [], false, false);
-        $queue = new Queue('queueName', 'DifferentExchangeName', null, false, false);
         $this->connection->getChannel()
-            ->declareExchange($exchange)
-            ->declareQueue($queue)
-            ->bindQueue($queue);
+            ->declareExchange($exchange);
 
         $this->producer->publish($message);
         sleep(1); // the consumer needs a bit of delay from publish to ensure the message is available in the buffer.

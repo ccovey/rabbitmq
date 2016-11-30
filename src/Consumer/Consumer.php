@@ -5,6 +5,7 @@ namespace Ccovey\RabbitMQ\Consumer;
 use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
 use Ccovey\RabbitMQ\Queue;
+use Ccovey\RabbitMQ\QueueDeclarer;
 use Ccovey\RabbitMQ\QueuedMessage;
 use Ccovey\RabbitMQ\QueuedMessageInterface;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -15,6 +16,11 @@ class Consumer implements ConsumerInterface
      * @var ConnectionInterface
      */
     private $connection;
+
+    /**
+     * @var QueueDeclarer
+     */
+    private $queueDeclarer;
 
     /**
      * @var ChannelInterface
@@ -31,9 +37,10 @@ class Consumer implements ConsumerInterface
      */
     private $restartCheckCallable;
 
-    public function __construct(ConnectionInterface $connection, string $channelId = '')
+    public function __construct(ConnectionInterface $connection, QueueDeclarer $queueDeclarer, string $channelId = '')
     {
         $this->connection = $connection;
+        $this->queueDeclarer = $queueDeclarer;
         $this->channel = $this->connection->getChannel($channelId);
     }
 
@@ -49,6 +56,7 @@ class Consumer implements ConsumerInterface
 
     public function consume(Consumable $consumable)
     {
+        $this->queueDeclarer->declareQueue($consumable->getQueueName());
         $consumable->setCallback([$this, 'process']);
         $this->channel->consume($consumable);
 
@@ -59,6 +67,7 @@ class Consumer implements ConsumerInterface
 
     public function getMessage(Consumable $consumable) : QueuedMessage
     {
+        $this->queueDeclarer->declareQueue($consumable->getQueueName());
         return new QueuedMessage($this->channel->getMessage($consumable));
     }
 

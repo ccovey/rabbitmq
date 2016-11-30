@@ -4,6 +4,7 @@ use Ccovey\RabbitMQ\ChannelInterface;
 use Ccovey\RabbitMQ\Connection\ConnectionInterface;
 use Ccovey\RabbitMQ\Consumer\ConsumableParameters;
 use Ccovey\RabbitMQ\Consumer\Consumer;
+use Ccovey\RabbitMQ\QueueDeclarer;
 use Ccovey\RabbitMQ\QueuedMessage;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -13,6 +14,11 @@ class ConsumerTest extends PHPUnit_Framework_TestCase
      * @var ConnectionInterface
      */
     private $connection;
+
+    /**
+     * @var QueueDeclarer
+     */
+    private $queueDeclarer;
 
     /**
      * @var ChannelInterface
@@ -27,11 +33,12 @@ class ConsumerTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->connection = $this->createMock(ConnectionInterface::class);
+        $this->queueDeclarer = $this->createMock(QueueDeclarer::class);
         $this->channel = $this->createMock(ChannelInterface::class);
         $this->connection->expects($this->once())
             ->method('getChannel')
             ->willReturn($this->channel);
-        $this->consumer = new Consumer($this->connection);
+        $this->consumer = new Consumer($this->connection, $this->queueDeclarer);
     }
 
     public function testConsume()
