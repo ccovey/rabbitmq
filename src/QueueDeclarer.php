@@ -56,7 +56,10 @@ class QueueDeclarer
             );
 
             $this->channel->declareQueue($queue);
-            $this->channel->bindQueue($queue);
+
+            if ($this->config->getExchange() !== '') {
+                $this->channel->bindQueue($queue);
+            }
             $this->declaredQueues[] = $queueName;
         }
     }
