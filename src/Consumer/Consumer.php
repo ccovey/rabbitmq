@@ -65,7 +65,10 @@ class Consumer implements ConsumerInterface
         }
     }
 
-    public function getMessage(Consumable $consumable) : QueuedMessage
+    /**
+     * @return QueuedMessage|null
+     */
+    public function getMessage(Consumable $consumable)
     {
         $this->queueDeclarer->declareQueue($consumable->getQueueName());
         $message = $this->channel->getMessage($consumable);
