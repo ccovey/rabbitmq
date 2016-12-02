@@ -29,7 +29,7 @@ class QueueConfig
         $amqpTable = null;
         if (isset($this->configuration['amqp_table'])) {
             $amqpTable = new AMQPTable();
-            foreach ($this->configuration['aqmp_table'] as $key => $tableParam) {
+            foreach ($this->configuration['amqp_table'] as $key => $tableParam) {
                 $amqpTable->set($key, $tableParam);
             }
         }

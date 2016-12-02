@@ -47,4 +47,9 @@ class ProducerTest extends PHPUnit_Framework_TestCase
             ->with($message);
         $this->producer->publish($message);
     }
+
+    public function testGetChannel()
+    {
+        $this->assertEquals($this->channel, $this->producer->getChannel());
+    }
 }
