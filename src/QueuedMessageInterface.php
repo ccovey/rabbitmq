@@ -2,6 +2,7 @@
 
 namespace Ccovey\RabbitMQ;
 
+use Symfony\Component\Stopwatch\StopWatchEvent;
 use Throwable;
 
 interface QueuedMessageInterface
@@ -12,4 +13,5 @@ interface QueuedMessageInterface
     public function getRawBody() : string;
     public function fail(Throwable $throwable = null);
     public function isFailed() : bool;
+    public function setStopWatchEvent(StopwatchEvent $stopWatchEvent);
 }

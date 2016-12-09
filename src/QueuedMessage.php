@@ -4,6 +4,7 @@ namespace Ccovey\RabbitMQ;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Symfony\Component\Stopwatch\StopwatchEvent;
 use Throwable;
 
 class QueuedMessage implements QueuedMessageInterface
@@ -75,6 +76,11 @@ class QueuedMessage implements QueuedMessageInterface
     public function getRawBody() : string
     {
         return $this->message->body;
+    }
+
+    public function setStopWatchEvent(StopwatchEvent $stopwatchEvent)
+    {
+        $this->stopwatchEvent = $stopwatchEvent;
     }
 
     /**
