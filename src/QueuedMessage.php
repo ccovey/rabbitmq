@@ -4,6 +4,7 @@ namespace Ccovey\RabbitMQ;
 
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
+use Throwable;
 
 class QueuedMessage implements QueuedMessageInterface
 {
@@ -22,6 +23,16 @@ class QueuedMessage implements QueuedMessageInterface
      */
     private $queueName;
 
+    /**
+     * @var bool
+     */
+    private $failed = false;
+
+    /**
+     * @var Throwable|null
+     */
+    private $throwable;
+
     public function __construct(AMQPMessage $message)
     {
         $this->message = $message;
@@ -37,6 +48,23 @@ class QueuedMessage implements QueuedMessageInterface
     public function getDeliveryTag() : string
     {
         return $this->message->delivery_info['delivery_tag'];
+    }
+
+    public function fail(Throwable $throwable = null)
+    {
+        $this->throwable = $throwable;
+        $this->failed = true;
+    }
+
+    public function isFailed() : bool
+    {
+        return $this->failed;
+
+    }
+
+    public function getThrowable()
+    {
+        return $this->throwable;
     }
 
     public function getBody() : array
