@@ -65,6 +65,15 @@ class Consumer implements ConsumerInterface
         }
     }
 
+    public function complete(QueuedMessageInterface $message)
+    {
+        if ($message->isFailed()) {
+            $this->channel->nack($message->getDeliveryTag());
+        } else {
+            $this->channel->acknowledge($message->getDeliveryTag());
+        }
+    }
+
     /**
      * @return QueuedMessage|null
      */
